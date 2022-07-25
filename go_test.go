@@ -12,7 +12,7 @@ func add(a, b int) int {
 
 func TestIncrease(t *testing.T) {
 	t.Log("Start testing")
-	result := add(1, 2)
-	assert.Equal(t, result, 3)
+	result := add(1, 3)
+	assert.Equal(t, result, 4)
 	//t.Log(result)
 }
