@@ -94,4 +94,5 @@ root@ubuntu:/home/oliver/Documents/modules3# nsenter -t $PID -n ip a
        valid_lft forever preferred_lft forever
 
 root@ubuntu:/home/oliver/Documents/modules3# curl 172.17.0.2:8080
-Success! Client IP:  172.17.0.1root@ubuntu:/home/oliver/Documents/modules3# 
+Success! Client IP:  172.17.0.1
+root@ubuntu:/home/oliver/Documents/modules3# 
