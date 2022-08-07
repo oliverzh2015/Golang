@@ -1,0 +1,97 @@
+root@ubuntu:/home/oliver/Documents/modules3# docker build -t httpserver:v1.0 -f Dockerfile .
+Sending build context to Docker daemon   5.12kB
+Step 1/9 : FROM golang:1.17 AS builder
+1.17: Pulling from library/golang
+d836772a1c1f: Pull complete 
+66a9e63c657a: Pull complete 
+d1989b6e74cf: Pull complete 
+c28818711e1e: Pull complete 
+9d6246ba248c: Pull complete 
+21d43f0d73c2: Pull complete 
+d8a1c5873f40: Pull complete 
+Digest: sha256:87262e4a4c7db56158a80a18fefdc4fee5accc41b59cde821e691d05541bbb18
+Status: Downloaded newer image for golang:1.17
+ ---> 742df529b073
+Step 2/9 : ENV GO111MODULE=off 	CGO_ENABLED=0 	GOOS=linux 	GOARCH=amd64
+ ---> Running in 70bef89f42e1
+Removing intermediate container 70bef89f42e1
+ ---> 4aa756819da3
+Step 3/9 : WORKDIR /build
+ ---> Running in 9e4663acf651
+Removing intermediate container 9e4663acf651
+ ---> 5e16e16cf564
+Step 4/9 : COPY . .
+ ---> ee6aae73c0c7
+Step 5/9 : RUN go build -o httpserver .
+ ---> Running in 42af5527da4a
+Removing intermediate container 42af5527da4a
+ ---> 01e66bd24f36
+Step 6/9 : FROM scratch
+ ---> 
+Step 7/9 : COPY --from=builder /build/httpserver /
+ ---> 2de9aa6714f3
+Step 8/9 : EXPOSE 8080
+ ---> Running in 1020c137bdc4
+Removing intermediate container 1020c137bdc4
+ ---> de4f208feb0a
+Step 9/9 : ENTRYPOINT ["/httpserver"]
+ ---> Running in 34ee2ea88c5d
+Removing intermediate container 34ee2ea88c5d
+ ---> 802f2d3a50c1
+Successfully built 802f2d3a50c1
+Successfully tagged httpserver:v1.0
+
+root@ubuntu:/home/oliver/Documents/modules3# docker images
+REPOSITORY   TAG       IMAGE ID       CREATED              SIZE
+httpserver   v1.0      802f2d3a50c1   About a minute ago   7.04MB
+<none>       <none>    01e66bd24f36   About a minute ago   964MB
+nginx        latest    b692a91e4e15   5 days ago           142MB
+golang       1.17      742df529b073   6 days ago           942MB
+centos       latest    5d0da3dc9764   10 months ago        231MB
+root@ubuntu:/home/oliver/Documents/modules3# docker run -d httpserver:v1.0
+7019181c95706f4107cbcdf189baf49f6a2f46e7a9ae7512e260651cc6f54f72
+
+root@ubuntu:/home/oliver/Documents/modules3# docker login 
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: oliverzhang17
+Password: 
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+root@ubuntu:/home/oliver/Documents/modules3# docker tag httpserver:v1.0 oliverzhang17/httpserver:0.1
+root@ubuntu:/home/oliver/Documents/modules3# docker images
+REPOSITORY                 TAG       IMAGE ID       CREATED         SIZE
+<none>                     <none>    01e66bd24f36   8 minutes ago   964MB
+httpserver                 v1.0      802f2d3a50c1   8 minutes ago   7.04MB
+oliverzhang17/httpserver   0.1       802f2d3a50c1   8 minutes ago   7.04MB
+nginx                      latest    b692a91e4e15   5 days ago      142MB
+golang                     1.17      742df529b073   6 days ago      942MB
+centos                     latest    5d0da3dc9764   10 months ago   231MB
+
+root@ubuntu:/home/oliver/Documents/modules3# docker push oliverzhang17/httpserver:0.1
+The push refers to repository [docker.io/oliverzhang17/httpserver]
+cf92a9ad2b1e: Pushed 
+0.1: digest: sha256:e91b0da7a0809f745e4b2d5e8d9d1ad09a9c4e03dbd693c253f784130e0d541b size: 528
+
+root@ubuntu:/home/oliver/Documents/modules3# docker ps
+CONTAINER ID   IMAGE             COMMAND         CREATED         STATUS         PORTS      NAMES
+7019181c9570   httpserver:v1.0   "/httpserver"   8 minutes ago   Up 8 minutes   8080/tcp   brave_wozniak
+
+root@ubuntu:/home/oliver/Documents/modules3# PID=$(docker inspect --format "{{ .State.Pid }}" brave_wozniak)
+
+root@ubuntu:/home/oliver/Documents/modules3# echo $PID
+4855
+root@ubuntu:/home/oliver/Documents/modules3# nsenter -t $PID -n ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+6: eth0@if7: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+    link/ether 02:42:ac:11:00:02 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 172.17.0.2/16 brd 172.17.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+
+root@ubuntu:/home/oliver/Documents/modules3# curl 172.17.0.2:8080
+Success! Client IP:  172.17.0.1root@ubuntu:/home/oliver/Documents/modules3# 
