@@ -11,5 +11,5 @@ RUN go build -o httpserver .
 
 FROM scratch
 COPY --from=builder /build/httpserver /
-EXPOSE 8080
+EXPOSE 80
 ENTRYPOINT ["/httpserver"]

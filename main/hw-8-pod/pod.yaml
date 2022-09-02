@@ -4,7 +4,7 @@ metadata:
   name: httpserver
 spec:
   containers:
-    - name: httpserver0.1
-      image: oliverzhang17/httpserver
+    - name: httpserver
+      image: oliverzhang17/httpserver:0.2
       ports:
-        - containerPort: 8080
+        - containerPort: 80

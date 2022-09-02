@@ -39,7 +39,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(r.RemoteAddr)
 	log.Printf("Success! Response code: %d", 200)
 	log.Printf("Success! clientip: %s", clientIP)
-	fmt.Fprintf(w, "Success! Client IP:  %s", clientIP)
+	fmt.Fprintf(w, "Success! Client IP:  %s\n", clientIP)
 
 }
 
@@ -65,7 +65,7 @@ func getClientIP(r *http.Request) string {
 }
 
 func healthz(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "wokring, response code is 200")
+	fmt.Fprintf(w, "wokring, response code is 200 \n")
 }
 
 func main() {
@@ -77,7 +77,7 @@ func main() {
 	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("/healthz", healthz)
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(":80", mux); err != nil {
 		log.Fatalf("Start http server failed, err: %s\n", err.Error())
 	}
 
