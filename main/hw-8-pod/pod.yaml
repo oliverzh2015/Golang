@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: httpserver
+spec:
+  containers:
+    - name: httpserver0.1
+      image: oliverzhang17/httpserver
+      ports:
+        - containerPort: 8080
