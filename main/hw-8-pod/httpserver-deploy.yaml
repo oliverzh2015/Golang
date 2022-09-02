@@ -1,0 +1,67 @@
+#作业要求：编写 Kubernetes 部署脚本将 httpserver 部署到 Kubernetes 集群，以下是你可以思考的维度。
+   # 优雅启动  done
+   # 优雅终止  done
+   # 资源需求和 QoS 保证  done
+   # 探活  done
+   # 日常运维需求，日志等级 
+   # 配置和代码分离
+   # 分不同的node部署pod
+
+#提交地址： https://jinshuju.net/f/seOh4z
+#截止日期：2022 年 9 月 4 日 7:59 am
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpserver
+  labels:
+    app: httpserver
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: httpserver
+  template:
+    metadata:
+      labels:
+        app: httpserver
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 50
+            preference:
+              matchExpressions:
+              - key: name
+                operator: In
+                values:
+                - worknode1
+          - weight: 50
+            preference:
+              matchExpressions:
+              - key: name
+                operator: In
+                values:
+                - worknode2
+      containers:
+      - name: httpserver
+        image: oliverzhang17/httpserver:0.2
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+            httpHeaders:
+            - name: Custom-Header
+              value: Awesome
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 600m
+            memory: 300Mi
+          requests:
+            cpu: 500m
+            memory: 200Mi
+      terminationGracePeriodSeconds: 60
