@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: httpserver
+  name: httpsvc
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector: #如果下面有几行，是并且的关系，必须都满足这些条件
+    app: httpserver
+  type: ClusterIP

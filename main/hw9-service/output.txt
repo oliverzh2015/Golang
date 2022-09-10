@@ -1,0 +1,28 @@
+root@K8SMaster:~/hw8# k get pod -owide
+NAME                                     READY   STATUS              RESTARTS        AGE     IP               NODE        NOMINATED NODE   READINESS GATES
+envoy-f4dcfcf47-hgcng                    1/1     Running             2 (2d12h ago)   11d     172.16.16.149    k8smaster   <none>           <none>
+etcd-0                                   0/1     Pending             0               17d     <none>           <none>      <none>           <none>
+httpserver-688bb5cbfc-ds5xt              1/1     Running             0               7d6h    172.16.119.94    k8snote1    <none>           <none>
+httpserver-688bb5cbfc-lzfr5              0/1     Terminating         1               7d6h    172.16.169.135   k8s-node2   <none>           <none>
+httpserver-688bb5cbfc-tndxw              1/1     Running             0               7d6h    172.16.119.95    k8snote1    <none>           <none>
+httpserver-688bb5cbfc-wnzk8              0/1     Terminating         1               7d6h    172.16.169.134   k8s-node2   <none>           <none>
+httpserver-688bb5cbfc-wphh6              0/1     ContainerCreating   0               8m29s   <none>           k8snote1    <none>           <none>
+httpserver-688bb5cbfc-zk28f              0/1     ContainerCreating   0               8m29s   <none>           k8smaster   <none>           <none>
+my-release-node-problem-detector-lxkwm   1/1     Running             0               30h     172.16.169.139   k8s-node2   <none>           <none>
+my-release-node-problem-detector-rzjtx   1/1     Running             0               30h     172.16.119.99    k8snote1    <none>           <none>
+my-release-node-problem-detector-xd99n   1/1     Running             0               30h     172.16.16.155    k8smaster   <none>           <none>
+nginx-deployment-8c8bd5db9-55dkg         1/1     Running             2 (2d12h ago)   11d     172.16.16.150    k8smaster   <none>           <none>
+nginx-deployment-8c8bd5db9-r7xxn         1/1     Running             1 (8d ago)      11d     172.16.119.91    k8snote1    <none>           <none>
+nginx-deployment-8c8bd5db9-snbzx         1/1     Running             1 (8d ago)      11d     172.16.119.92    k8snote1    <none>           <none>
+task-pv-pod                              1/1     Running             1 (8d ago)      11d     172.16.119.93    k8snote1    <none>           <none>
+root@K8SMaster:~/hw8# k create -f svc.yaml
+service/httpsvc created
+root@K8SMaster:~/hw8# k get svc
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
+etcd         ClusterIP   None           <none>        2380/TCP,2379/TCP   17d
+httpsvc      ClusterIP   10.1.113.167   <none>        80/TCP              5s
+kubernetes   ClusterIP   10.1.0.1       <none>        443/TCP             29d
+root@K8SMaster:~/hw8# curl 10.1.113.167
+Success! Client IP:  192.168.46.132
+root@K8SMaster:~/hw8# curl 172.16.119.95
+Success! Client IP:  192.168.46.132
